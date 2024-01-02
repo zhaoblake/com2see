@@ -1,2 +1,2 @@
-# com2see
-Generate your commit report!
+# com2see(WIP)
+Generate annual commit report for your git repository!
