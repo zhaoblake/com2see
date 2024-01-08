@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+const (
+	HardworkingStartHour int = 20
+	HardworkingEndHour   int = 6
+)
+
 type repoSlice struct {
 	r     *git.Repository
 	since *time.Time
@@ -91,7 +96,7 @@ func (rs *repoSlice) MostHardworkingDeveloper() (string, int, error) {
 		var hardworkingCommits []*object.Commit
 		for _, c := range commits {
 			hour := c.Committer.When.Hour()
-			if hour >= 20 || hour < 6 {
+			if hour >= HardworkingStartHour || hour < HardworkingEndHour {
 				hardworkingCommits = append(hardworkingCommits, c)
 			}
 		}
