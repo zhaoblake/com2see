@@ -2,9 +2,11 @@ package internal
 
 import (
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/olekukonko/tablewriter"
 	"html/template"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 type reportData struct {
@@ -49,6 +51,35 @@ func GenerateHTMLReport(gitPath string, year int) error {
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func GenerateConsoleReport(gitPath string, year int) error {
+	firstDay, lastDay := getYearBounds(year)
+	rs, err := newRepoSlice(gitPath, &firstDay, &lastDay)
+	if err != nil {
+		return err
+	}
+
+	data, err := NewReportData(year, rs)
+	if err != nil {
+		return err
+	}
+
+	tableData := [][]string{
+		{"Repository", data.RepoName},
+		{"Commit Count", strconv.Itoa(data.CommitCount)},
+		{"Developer Count", strconv.Itoa(data.DeveloperCount)},
+		{"Most Active Developer", data.MostActiveDeveloper},
+		{"Most Active Developer Commit Count", strconv.Itoa(data.MostActiveDeveloperCommitCount)},
+		{"Most Hardworking Developer", data.MostHardworkingDeveloper},
+		{"Max Hardworking Commit Count", strconv.Itoa(data.MaxHardworkingCommitCount)},
+	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetRowLine(true)
+	table.AppendBulk(tableData)
+	table.Render()
 
 	return nil
 }
